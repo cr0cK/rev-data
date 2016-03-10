@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.2.1] - 2016-03-10
+### Fix
+  - Remove an unwanted 'undefined' in output.
+
 ## [1.2.0] - 2016-03-10
 ### Fix
   - Handle large files.
