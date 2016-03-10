@@ -29,15 +29,19 @@ const timeID = setTimeout(() => {
   process.exit(1);
 }, 2000);
 
+var allData;
 process.stdin.on('data', function(data) {
   clearTimeout(timeID);
+  allData += data;
+});
 
-  const hash = md5(data).substr(0, 10);
+process.stdin.on('end', function() {
+  const hash = md5(allData).substr(0, 10);
   const hashedFileName = path.join(
     process.cwd(),
     commander.filename.replace('[hash]', hash)
   );
-  fs.writeFileSync(hashedFileName, data, 'utf8');
+  fs.writeFileSync(hashedFileName, allData, 'utf8');
   process.stdout.write(`Write data into "${hashedFileName}".\n`);
 
   // build manifest
