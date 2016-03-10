@@ -1,6 +1,6 @@
 {
   "name": "rev-data",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Write a revved file with data received from stdin.",
   "bin": {
     "rev-data": "index.js"
