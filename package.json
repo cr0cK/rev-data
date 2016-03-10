@@ -25,5 +25,9 @@
   "bugs": {
     "url": "https://github.com/cr0cK/rev-data/issues"
   },
-  "homepage": "https://github.com/cr0cK/rev-data#readme"
+  "homepage": "https://github.com/cr0cK/rev-data#readme",
+  "dependencies": {
+    "commander": "^2.9.0",
+    "md5": "^2.1.0"
+  }
 }
