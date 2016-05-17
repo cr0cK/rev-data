@@ -16,6 +16,8 @@ const revFileName = 'rev-manifest.json';
 commander
   .option('-f, --filename <filename>', 'Output file. Default: ' + fileName, fileName)
   .option('-r, --manifest <filename>', 'Manifest file')
+  .option('-a, --assetmanifest <filename>', 'Assets manifest file')
+  .option('-p, --pathprefix <string>', 'Assets manifest file path prefix')
   .parse(process.argv);
 
 process.stdout.write('Waiting data from stdin...\n');
@@ -29,6 +31,29 @@ const timeID = setTimeout(() => {
   process.exit(1);
 }, 2000);
 
+function rewritePath(path) {
+  if (!commander.pathprefix) return path;
+  const re = new RegExp('^' + commander.pathprefix);
+  return path.replace(re, '');
+}
+
+const rewrites = [];
+if (commander.assetmanifest) {
+  if (!fs.existsSync(commander.assetmanifest)) {
+    process.stdout.write('assets manifests does not exists');
+    process.exit(1);
+  }
+
+  const assetManifest = JSON.parse(fs.readFileSync(commander.assetmanifest));
+  Object.keys(assetManifest).forEach(function (key) {
+    const orig = new RegExp(rewritePath(key), 'g');
+    const dest = rewritePath(assetManifest[key]);
+    rewrites.push(function(input) {
+      return input.replace(orig, dest);
+    });
+  });
+}
+
 const dataParts = [];
 process.stdin.on('data', function(data) {
   clearTimeout(timeID);
@@ -37,13 +62,16 @@ process.stdin.on('data', function(data) {
 
 process.stdin.on('end', function() {
   const data = dataParts.join('\n');
+  const dataRewrited = rewrites.reduce(function (previousData, rewriter) {
+    return rewriter(previousData);
+  }, data);
 
-  const hash = md5(data).substr(0, 10);
+  const hash = md5(dataRewrited).substr(0, 10);
   const hashedFileName = path.join(
     process.cwd(),
     commander.filename.replace('[hash]', hash)
   );
-  fs.writeFileSync(hashedFileName, data, 'utf8');
+  fs.writeFileSync(hashedFileName, dataRewrited, 'utf8');
   process.stdout.write(`Write data into "${hashedFileName}".\n`);
 
   // build manifest
