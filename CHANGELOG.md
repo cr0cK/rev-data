@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.3.1] - 2016-05-18
+### Fixed
+  - Fix replacements.
+
 ## [1.3.0] - 2016-05-17
 ### Added
   - Allow content to be replaced with another manifest.

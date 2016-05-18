@@ -45,9 +45,17 @@ if (commander.assetmanifest) {
   }
 
   const assetManifest = JSON.parse(fs.readFileSync(commander.assetmanifest));
-  Object.keys(assetManifest).forEach(function (key) {
+
+  // sort paths from longest to shortest to avoid to replace sub paths
+  // that could match
+  const sortedPaths = Object.keys(assetManifest).sort((a, b) => {
+    return a.length < b.length ? 1 : -1;
+  })
+
+  sortedPaths.forEach(function (key) {
     const orig = new RegExp(rewritePath(key), 'g');
     const dest = rewritePath(assetManifest[key]);
+
     rewrites.push(function(input) {
       return input.replace(orig, dest);
     });
