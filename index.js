@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-// Write bytes received in stdin to a revved file path.
+// Write bytes received from stdin to a revved file path.
 //
 // Usage:
 // cat node_modules/*/main.css | ./rev-data.js -f ./styles/modules-[hash].css -r ./styles/rev-manifest.json
 
-const md5 = require('md5');
 const fs = require('fs');
 const path = require('path');
+const md5 = require('md5');
 const commander = require('commander');
 
 const fileName = 'rev-data-[hash].file';
@@ -18,6 +18,7 @@ commander
   .option('-r, --manifest <filename>', 'Manifest file')
   .option('-a, --assetmanifest <filename>', 'Assets manifest file')
   .option('-p, --pathprefix <string>', 'Assets manifest file path prefix')
+  .option('-t, --timeout <number>', 'Timeout to wait for data until the process exits', 5000)
   .parse(process.argv);
 
 process.stdout.write('Waiting data from stdin...\n');
@@ -29,7 +30,7 @@ const timeID = setTimeout(() => {
   process.stdout.write('No data received from stdin!');
   commander.help();
   process.exit(1);
-}, 2000);
+}, commander.timeout);
 
 function rewritePath(path) {
   if (!commander.pathprefix) return path;
