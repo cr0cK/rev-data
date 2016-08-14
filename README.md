@@ -2,7 +2,7 @@
 
 Write a revved file with data received from stdin.
 
-## Installation
+## Installation
 
 `npm i -g rev-data`
 
