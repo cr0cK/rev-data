@@ -24,7 +24,6 @@ commander
 process.stdout.write('Waiting data from stdin...\n');
 
 process.stdin.resume();
-process.stdin.setEncoding('utf8');
 
 const timeID = setTimeout(() => {
   process.stdout.write('No data received from stdin!');
@@ -64,13 +63,13 @@ if (commander.assetmanifest) {
 }
 
 const dataParts = [];
-process.stdin.on('data', function(data) {
+process.stdin.on('data', function (chunk) {
   clearTimeout(timeID);
-  dataParts.push(data);
+  dataParts.push(chunk);
 });
 
 process.stdin.on('end', function() {
-  const data = dataParts.join('\n');
+  const data = Buffer.concat(dataParts).toString();
   const dataRewrited = rewrites.reduce(function (previousData, rewriter) {
     return rewriter(previousData);
   }, data);
